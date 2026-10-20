@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Milford Anniversary Trip</title>
+<meta name="description" content="Pick-and-choose road trip board: Fairfield → Milford → Bushkill Falls → Stroudsburg → home, Oct 22–24, 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{
+  --bg:#f5efe3; --surface:#fffdf8; --surface2:#f9f3e8; --ink:#1f2a24; --muted:#6c6a5e; --line:#e3d9c6;
+  --accent:#b4502a; --accent-soft:#f6e1d4; --accent-ink:#fff;
+  --forest:#2f4b3b; --forest-soft:#dfe9e1; --gold:#b98a22; --warn:#8a5a00; --warn-soft:#fbefd2;
+  --thu:#c4582f; --fri:#2f6b4f; --sat:#3e5f99; --u:#7a6f5c;
+  --shadow:0 1px 2px rgba(40,30,10,.06),0 4px 14px rgba(40,30,10,.06);
+  --radius:16px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131915; --surface:#1c241f; --surface2:#222b25; --ink:#ece6d8; --muted:#a8a493; --line:#2f3a32;
+    --accent:#e27c4e; --accent-soft:#3a2a21; --accent-ink:#1a120d;
+    --forest:#9cc4ab; --forest-soft:#22332a; --gold:#d9ae4c; --warn:#f0c46a; --warn-soft:#352c17;
+    --thu:#e27c4e; --fri:#6fbf96; --sat:#86a6e0; --u:#b3a88f;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#131915; --surface:#1c241f; --surface2:#222b25; --ink:#ece6d8; --muted:#a8a493; --line:#2f3a32;
+  --accent:#e27c4e; --accent-soft:#3a2a21; --accent-ink:#1a120d;
+  --forest:#9cc4ab; --forest-soft:#22332a; --gold:#d9ae4c; --warn:#f0c46a; --warn-soft:#352c17;
+  --thu:#e27c4e; --fri:#6fbf96; --sat:#86a6e0; --u:#b3a88f;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 14px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:700;letter-spacing:-.01em;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+
+/* header */
+header.hero{padding-top:22px;padding-bottom:12px}
+.kicker{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}
+.hero h1{font-size:30px;line-height:1.1;margin:6px 0 6px}
+.hero p{margin:0;color:var(--muted)}
+.route{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;font-size:13px}
+.route span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+.route i{font-style:normal;color:var(--muted);align-self:center}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:600;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;line-height:1.2}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent}
+.btn.sm{padding:6px 11px;font-size:13px}
+.btn.xs{padding:4px 9px;font-size:12px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+/* tabs */
+nav.tabs{position:sticky;top:0;z-index:500;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.tabs .wrap{display:flex;gap:4px;padding-top:8px;padding-bottom:8px}
+.tab{flex:1 1 auto;min-width:0;border:0;background:transparent;padding:8px 4px;border-radius:10px;font-weight:600;font-size:14px;color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap}
+@media (max-width:380px){.tab{font-size:13px}}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.count{background:var(--accent);color:var(--accent-ink);border-radius:999px;font-size:11px;min-width:18px;height:18px;padding:0 5px;display:inline-flex;align-items:center;justify-content:center}
+.count.muted{background:var(--line);color:var(--ink)}
+.count:empty{display:none}
+
+section.view{display:none;padding:14px 0 90px}
+section.view.active{display:block}
+
+/* filters */
+.filters{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap}
+.chip[aria-pressed="true"]{background:var(--forest);border-color:var(--forest);color:var(--surface)}
+.filters-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:6px 0 4px;font-weight:600}
+
+/* heads-up */
+details.heads{background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);border-radius:12px;padding:10px 14px;margin:8px 0 14px}
+details.heads summary{cursor:pointer;font-weight:600;color:var(--warn)}
+details.heads ul{margin:8px 0 2px;padding-left:18px}
+details.heads li{margin:4px 0}
+
+/* leg headers */
+.leg-h{margin:22px 0 10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.leg-h h2{font-size:21px}
+.leg-h p{margin:0;color:var(--muted);font-size:13px;flex-basis:100%}
+
+/* cards */
+.grid{display:grid;grid-template-columns:1fr;gap:14px}
+@media (min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:border-color .2s, box-shadow .2s}
+.card.picked{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft),var(--shadow)}
+.ph{position:relative;aspect-ratio:16/10;background:linear-gradient(135deg,var(--forest-soft),var(--accent-soft));overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;opacity:0;transition:opacity .4s}
+.ph img.on{opacity:1}
+.ph .emo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:44px;opacity:.75}
+.ph .emo.hide{display:none}
+.ph .tags{position:absolute;left:8px;top:8px;display:flex;gap:5px;flex-wrap:wrap;right:8px}
+.tag{background:rgba(20,24,20,.72);color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:999px;backdrop-filter:blur(4px)}
+.tag.hard{background:rgba(180,80,42,.92)}
+.tag.warn{background:rgba(138,90,0,.92)}
+.ph .credit{position:absolute;right:6px;bottom:5px;font-size:10px;color:#fff;background:rgba(0,0,0,.45);padding:1px 6px;border-radius:6px;text-decoration:none}
+.ph .credit:empty{display:none}
+.cbody{padding:12px 14px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cbody h3{font-size:18px;line-height:1.2}
+.blurb{margin:0;color:var(--ink)}
+.meta{display:flex;flex-wrap:wrap;gap:6px;font-size:12px;color:var(--muted)}
+.meta span{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:2px 7px}
+.warnline{font-size:13px;background:var(--warn-soft);color:var(--warn);border-radius:10px;padding:6px 9px}
+.more{font-size:14px;color:var(--ink);border-top:1px dashed var(--line);padding-top:8px;display:none}
+.more.open{display:block}
+.more p{margin:0 0 8px}
+.gallery{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.gallery img{height:84px;border-radius:8px;flex:none}
+.links{display:flex;flex-wrap:wrap;gap:10px;font-size:13px;font-weight:600}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;align-items:center}
+.daypick{display:flex;gap:4px}
+.daypick button{border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:4px 9px;font-size:12px;font-weight:600;cursor:pointer}
+.daypick button[aria-pressed="true"]{color:#fff;border-color:transparent}
+.daypick button[data-d="thu"][aria-pressed="true"]{background:var(--thu)}
+.daypick button[data-d="fri"][aria-pressed="true"]{background:var(--fri)}
+.daypick button[data-d="sat"][aria-pressed="true"]{background:var(--sat)}
+.daypick button[data-d="u"][aria-pressed="true"]{background:var(--u)}
+.empty{text-align:center;color:var(--muted);padding:40px 10px;border:1px dashed var(--line);border-radius:var(--radius)}
+
+/* plan */
+.banner{background:var(--forest-soft);border:1px solid color-mix(in srgb,var(--forest) 35%,transparent);border-radius:12px;padding:10px 12px;margin-bottom:12px;font-size:14px}
+.banner b{color:var(--forest)}
+.banner .row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.day{margin:6px 0 18px}
+.day-h{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.day-h h2{font-size:19px}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.day-h .spacer{flex:1}
+.plan-list{list-style:none;margin:0;padding:0;min-height:46px;border-radius:12px;display:flex;flex-direction:column;gap:8px}
+.plan-list:empty::after{content:"Drag stops here, or pick them from Explore";display:block;text-align:center;color:var(--muted);font-size:13px;padding:12px;border:1px dashed var(--line);border-radius:12px}
+.prow{display:grid;grid-template-columns:auto 52px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px 8px 6px;box-shadow:var(--shadow)}
+.prow.hl-added{box-shadow:0 0 0 2px var(--fri)}
+.prow.hl-moved,.prow.hl-retimed{box-shadow:0 0 0 2px var(--gold)}
+.handle{cursor:grab;color:var(--muted);font-size:18px;padding:6px 4px;touch-action:none;user-select:none}
+.thumb{width:52px;height:52px;border-radius:9px;background:linear-gradient(135deg,var(--forest-soft),var(--accent-soft));overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:22px}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.pname{font-weight:600;line-height:1.25}
+.psub{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:3px}
+.psub input[type=time]{border:1px solid var(--line);border-radius:7px;background:var(--surface2);padding:2px 5px;font-size:12px;max-width:110px}
+.psub select{border:1px solid var(--line);border-radius:7px;background:var(--surface2);padding:2px 4px;font-size:12px}
+.badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 6px;border-radius:6px;background:var(--gold);color:#fff}
+.badge.add{background:var(--fri)}
+.pbtns{display:flex;flex-direction:column;gap:4px}
+.iconbtn{border:1px solid var(--line);background:var(--surface2);border-radius:8px;width:32px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.sortable-ghost{opacity:.35}
+.sortable-chosen .prow,.sortable-chosen.prow{box-shadow:0 8px 24px rgba(0,0,0,.18)}
+
+/* drawer */
+.drow{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.drow .pname{flex:1}
+
+/* map */
+#map{height:min(70vh,560px);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;background:var(--surface2)}
+.maptools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:13px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.pin{width:26px;height:26px;border-radius:50%;color:#fff;font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.pin.dim{width:16px;height:16px;border-width:2px;font-size:0;opacity:.85}
+.pin.home{background:#222;width:24px;height:24px;font-size:13px}
+.leaflet-popup-content{font:13px/1.4 Inter,system-ui,sans-serif;margin:10px 12px}
+.leaflet-popup-content b{font-size:14px}
+.popbtns{display:flex;gap:6px;margin-top:6px}
+.popbtns button{border:1px solid #ccc;background:#fff;color:#222;border-radius:7px;padding:3px 8px;font-size:12px;cursor:pointer}
+.tile-note{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* modal */
+dialog{border:0;border-radius:18px;padding:0;width:min(560px,calc(100vw - 24px));background:var(--surface);color:var(--ink);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(10,12,10,.5)}
+.dlg{padding:18px}
+.dlg h2{font-size:20px;margin-bottom:6px}
+.dlg p.hint{color:var(--muted);font-size:13px;margin:0 0 10px}
+.dlg textarea{width:100%;min-height:180px;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface2);font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+.dlg .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.dlg .row .grow{flex:1}
+.toggle{display:inline-flex;align-items:center;gap:6px;font-size:13px;cursor:pointer}
+.slot{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-bottom:8px}
+.slot.active{border-color:var(--accent)}
+.slot input{border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:var(--surface2);width:100%;min-width:0}
+.slot small{grid-column:1/-1;color:var(--muted);font-size:11px}
+.err{color:#c0392b;font-size:13px;margin-top:8px}
+
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(30px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-size:14px;font-weight:600;opacity:0;transition:.25s;z-index:2000;pointer-events:none;max-width:calc(100vw - 32px);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+footer{color:var(--muted);font-size:12px;padding:10px 0 40px}
+.sources a{color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="hero wrap">
+  <div class="kicker">Anniversary road trip · Oct 22–24, 2026</div>
+  <h1>Milford, the falls &amp; the long way home</h1>
+  <p>No fixed schedule — browse the cards, ♥ the ones you like, and put the rest in the drawer. Times are optional.</p>
+  <div class="route"><span>Fairfield</span><i>→</i><span>Milford (Thu night)</span><i>→</i><span>Bushkill Falls</span><i>→</i><span>Stroudsburg</span><i>→</i><span>wherever night falls</span><i>→</i><span>home</span></div>
+  <div class="toolbar">
+    <button class="btn primary sm" id="bExport">📤 Send plan by text</button>
+    <button class="btn sm" id="bImport">📥 Import a plan</button>
+    <button class="btn sm" id="bSlots">💾 Saves <span id="dirtyDot" class="count muted" style="display:none">•</span></button>
+    <button class="btn ghost sm" id="bSuggest">✨ Load a suggested plan</button>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Views">
+  <div class="wrap" role="tablist">
+    <button class="tab" role="tab" data-view="explore" aria-selected="true">Explore</button>
+    <button class="tab" role="tab" data-view="plan" aria-selected="false">Our plan <span class="count" id="cPlan"></span></button>
+    <button class="tab" role="tab" data-view="map" aria-selected="false">Map</button>
+    <button class="tab" role="tab" data-view="drawer" aria-selected="false">Drawer <span class="count muted" id="cDrawer"></span></button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <section class="view active" id="v-explore">
+    <details class="heads">
+      <summary>⚠️ Good to know before you go (<span id="hCount"></span>)</summary>
+      <ul id="headsList"></ul>
+    </details>
+    <div class="filters-label">Where</div>
+    <div class="filters" id="fLeg"></div>
+    <div class="filters-label">What</div>
+    <div class="filters" id="fCat"></div>
+    <div id="exploreList"></div>
+  </section>
+
+  <section class="view" id="v-plan">
+    <div id="importBanner"></div>
+    <div id="planDays"></div>
+  </section>
+
+  <section class="view" id="v-map">
+    <div class="maptools">
+      <label class="toggle"><input type="checkbox" id="mShowAll" checked> Show unpicked ideas</label>
+      <label class="toggle"><input type="checkbox" id="mShowDrawer"> Show drawer</label>
+      <span class="spacer" style="flex:1"></span>
+      <button class="btn xs" id="mFit">Fit</button>
+    </div>
+    <div id="map" role="region" aria-label="Trip map"></div>
+    <div class="legend">
+      <span><i class="dot" style="background:var(--thu)"></i>Thu</span>
+      <span><i class="dot" style="background:var(--fri)"></i>Fri</span>
+      <span><i class="dot" style="background:var(--sat)"></i>Sat</span>
+      <span><i class="dot" style="background:var(--u)"></i>Anytime</span>
+      <span><i class="dot" style="background:#9a9a9a"></i>Not picked</span>
+      <span>⌂ Fairfield</span>
+    </div>
+    <div class="tile-note" id="tileNote"></div>
+  </section>
+
+  <section class="view" id="v-drawer">
+    <p style="color:var(--muted);margin:0 0 12px">Things you've put away. They're hidden from Explore and the map until you bring them back.</p>
+    <div id="drawerList"></div>
+  </section>
+
+  <footer>
+    <p>Hours, fees and closures were checked on Oct 20, 2026 but change often — tap a card's links before driving. Photos load from Wikipedia/Wikimedia Commons; "area photo" means the picture shows the town, not the exact business. Saves stay on this phone only; use <b>Send plan by text</b> to share.</p>
+  </footer>
+</main>
+
+<dialog id="dExport"><div class="dlg">
+  <h2>Send this plan</h2>
+  <p class="hint">Text this to each other. Whoever receives it taps <b>Import a plan</b> and pastes the whole message — the page finds the code on its own.</p>
+  <textarea id="exportText" readonly></textarea>
+  <div class="row">
+    <label class="toggle"><input type="checkbox" id="codeOnly"> Code only (shorter)</label>
+    <span class="grow"></span>
+    <button class="btn sm" id="bShare" style="display:none">Share…</button>
+    <button class="btn primary sm" id="bCopy">Copy</button>
+    <button class="btn ghost sm" data-close>Close</button>
+  </div>
+</div></dialog>
+
+<dialog id="dImport"><div class="dlg">
+  <h2>Import a plan</h2>
+  <p class="hint">Paste the text message you got. Changes will be highlighted in <b>Our plan</b>, and you can undo.</p>
+  <textarea id="importText" placeholder="Paste the whole message here…"></textarea>
+  <div class="err" id="importErr"></div>
+  <div class="row"><span class="grow"></span>
+    <button class="btn ghost sm" data-close>Cancel</button>
+    <button class="btn primary sm" id="bApply">Apply</button>
+  </div>
+</div></dialog>
+
+<dialog id="dSlots"><div class="dlg">
+  <h2>Saved versions</h2>
+  <p class="hint">Five save slots on <b>this phone</b>. Your current board also autosaves. To share with each other, use Send plan by text.</p>
+  <div id="slotList"></div>
+  <div class="row"><span class="grow"></span><button class="btn ghost sm" data-close>Close</button></div>
+</div></dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.2/Sortable.min.js"></script>
+<script>
+(function(){
+"use strict";
+
+/* ---------------- data ---------------- */
+const HOME = {name:"Fairfield, PA", lat:39.7873, lng:-77.3694};
+
+const LEGS = {
+  up:     {label:"Drive up",      title:"On the way up",                 sub:"Thursday · Fairfield → Milford is ~3.5 hrs direct (I-81 → I-78 → PA-33 → I-80 → US-209). These two also work on the way home."},
+  milford:{label:"Milford",       title:"Milford & its falls",           sub:"Thursday afternoon or Friday morning · your hotel's home base"},
+  falls:  {label:"Bushkill & Water Gap", title:"Bushkill Falls & the Delaware Water Gap", sub:"Friday · 30–45 min south of Milford on US-209"},
+  stroud: {label:"Stroudsburg",   title:"Stroudsburg",                   sub:"Friday afternoon & evening · ~25 min from Bushkill Falls"},
+  sleep:  {label:"Friday beds",   title:"If night falls on you",         sub:"Friday-night beds along the way — call or book from the road"},
+  home:   {label:"Drive home",    title:"On the way home",               sub:"Saturday · Stroudsburg → Fairfield is ~3 hrs; the Jim Thorpe route adds a small detour"}
+};
+const LEG_ORDER = ["up","milford","falls","stroud","sleep","home"];
+
+const CATS = {
+  falls:  {label:"Waterfalls", emoji:"💧"},
+  hike:   {label:"Hikes", emoji:"⛰️"},
+  shop:   {label:"Antiques & Christmas", emoji:"🕰️"},
+  food:   {label:"Food", emoji:"🍽️"},
+  history:{label:"History", emoji:"🏛️"},
+  scenic: {label:"Scenic stops", emoji:"🍂"},
+  sleep:  {label:"Places to sleep", emoji:"🛏️"}
+};
+const CAT_ORDER = ["falls","hike","shop","food","history","scenic","sleep"];
+
+const DAYS = [["thu","Thu 10/22","Thursday"],["fri","Fri 10/23","Friday"],["sat","Sat 10/24","Saturday"],["u","Anytime","Not sure yet"]];
+const DAY_LABEL = Object.fromEntries(DAYS.map(d=>[d[0],d[1]]));
+const DAY_LONG = Object.fromEntries(DAYS.map(d=>[d[0],d[2]]));
+
+/* img: list of Wikipedia titles to try; area:true = the photo shows the town, not the business */
+const ITEMS = [
+ /* ---------- drive up ---------- */
+ {id:"hm", leg:"up", cat:"hike", hard:true, days:["thu","sat"], name:"Hawk Mountain Sanctuary",
+  blurb:"A rocky ridge climb to the North Lookout, where counters tally hawks and eagles riding the ridge south. Late October is prime for both raptors and color here.",
+  meta:["2–3 hrs","~$11 trail pass","Dawn–dusk"],
+  more:"<p>Lookout Trail to North Lookout is ~1 mile each way and gets rocky near the top. For the harder, more beautiful version, drop to the <b>River of Rocks</b> boulder field and climb back up past East Rocks — steep scrambles, budget 3 hrs.</p><p>About a 20-min detour off I-78 (exit 35, PA-143 north). Pay the trail fee at the visitor center or online. Bring binoculars if you have them.</p>",
+  addr:"1700 Hawk Mountain Rd, Kempton, PA 19529", lat:40.6361, lng:-75.9878,
+  img:["Hawk_Mountain_Sanctuary"], links:[["Hours & fees","https://www.hawkmountain.org/visit/visiting-info/admission-hours"]]},
+ {id:"mb", leg:"up", cat:"shop", xmas:true, days:["thu","sat"], name:"Moravian Book Shop & historic Bethlehem",
+  blurb:"America's oldest bookstore (founded 1745) has a year-round Christmas room — Moravian stars, Old World glass ornaments, beeswax candles — on a brick Main Street full of shops.",
+  meta:["1–1.5 hrs","Free to browse","~10 min off PA-33"],
+  more:"<p>\"Christmas City\" lives up to the name. Walk Main Street from the bookshop past Historic Hotel Bethlehem and the Moravian buildings. Good lunch stop roughly halfway up.</p>",
+  addr:"428 Main St, Bethlehem, PA 18018", lat:40.6199, lng:-75.3810,
+  img:["Moravian_Book_Shop","Bethlehem,_Pennsylvania"], links:[["Shop info","https://moravian.edu/bookshop"]]},
+
+ /* ---------- milford ---------- */
+ {id:"rf", leg:"milford", cat:"falls", days:["thu","fri"], name:"Raymondskill Falls",
+  blurb:"Pennsylvania's tallest waterfall — three tiers dropping about 150 ft. A short but steep loop to two viewing decks, 10 minutes from town.",
+  meta:["45 min–1 hr","Free","Daylight"],
+  more:"<p>~0.3–0.4 mile loop with ~180 ft of stairs and rock. Grippy shoes — it's slick when wet. Pair it with the Cliff Park hike, which starts across the road.</p>",
+  addr:"917 Raymondskill Rd, Milford, PA 18337", lat:41.2896, lng:-74.8412,
+  img:["Raymondskill_Falls"], links:[]},
+ {id:"cp", leg:"milford", cat:"hike", hard:true, days:["thu","fri"], name:"Cliff Park loop: Hackers Falls & Milford Knob",
+  blurb:"The 'harder and gorgeous' Milford hike: ~6 miles along cliff-edge overlooks of the Delaware valley, a waterfall pool at Hackers Falls, and a look down on Milford from the Knob.",
+  meta:["3–3.5 hrs","Free","~6 mi"],
+  more:"<p>Start at Hackers Trailhead on Raymondskill Rd (across from the falls lot). Hackers (yellow) → Hackers Falls → Pond Loop (blue) → Cliff Trail (white) → Milford Knob overlook → back along the cliff. Rolling, rocky in spots, no single huge climb.</p><p>Shorter (~4 mi): cut across on the Buchanan (orange) trail. Download a trail map first — signal is spotty.</p>",
+  addr:"Hackers Trailhead, Raymondskill Rd, Milford, PA 18337", lat:41.2911, lng:-74.8392,
+  img:["Delaware_Water_Gap_National_Recreation_Area"], area:true, links:[]},
+ {id:"gc", leg:"milford", cat:"falls", days:["fri"], name:"George W. Childs Park",
+  blurb:"Three cascades on Dingmans Creek in a hemlock ravine, on a ~1.4-mile loop with newly renovated viewing platforms. The best stand-in while Dingmans Falls is closed.",
+  meta:["1–1.5 hrs","~20 min from Milford"],
+  more:"<p>Quieter than the big-name falls. Paths and stairs follow both sides of the creek past Factory Falls, Fulmer Falls and Deer Leap Falls.</p>",
+  addr:"George W. Childs Park, Silver Lake Rd, Dingmans Ferry, PA 18328", lat:41.2172, lng:-74.9161,
+  img:["George_W._Childs_Park","Delaware_Water_Gap_National_Recreation_Area"], links:[]},
+ {id:"df", leg:"milford", cat:"falls", days:["fri"], name:"Dingmans Falls",
+  blurb:"PA's second-highest waterfall (about 130 ft), at the end of an easy boardwalk that passes thin, lacy Silverthread Falls.",
+  meta:["45 min","Free"],
+  warn:"Closed through 2025–26 for bridge and trail rebuilding. The reopening was estimated for summer 2026 but isn't confirmed — check NPS current conditions or call 570-426-2452 before driving.",
+  more:"<p>If it's open, it's a quick, easy add-on between Milford and Bushkill. If not, do Childs Park instead.</p>",
+  addr:"Dingmans Falls Visitor Center, Dingmans Falls Rd, Dingmans Ferry, PA 18328", lat:41.2307, lng:-74.8875,
+  img:["Dingmans_Falls"], links:[["NPS current conditions","https://www.nps.gov/dewa/planyourvisit/conditions.htm"]]},
+ {id:"gt", leg:"milford", cat:"history", days:["fri","thu"], name:"Grey Towers National Historic Site",
+  blurb:"Château-style home of Gifford Pinchot, the first chief of the US Forest Service, on a hill above town. The gardens and the vine-covered stone 'Finger Bowl' dining terrace are lovely in fall.",
+  meta:["1–2 hrs","Grounds free · tour fee","3 min from town"],
+  warn:"Mansion tours run on set days (in 2025: Fri–Mon, noon–3, into early November). Confirm 2026 times; the grounds are open sunup to sundown.",
+  more:"<p>Even without a tour, walk up the carriageway and around the gardens. Friday is the likeliest tour day for you.</p>",
+  addr:"122 Old Owego Turnpike, Milford, PA 18337", lat:41.3289, lng:-74.8158,
+  img:["Grey_Towers_National_Historic_Site"], links:[["Know before you go","https://www.fs.usda.gov/greytowers/plan-visit/know-before-go"]]},
+ {id:"ma", leg:"milford", cat:"shop", days:["thu","fri"], name:"Broad Street antiques crawl",
+  blurb:"Milford's walkable downtown is dotted with antique shops: Forest Hall (two floors, 214 Broad), Patina (furniture, china, pottery, 320 Broad), Schoolhouse Gallery II (202 Broad) and Ann Street Antiques.",
+  meta:["1.5–2 hrs","Walkable"],
+  warn:"Small shops keep short or irregular hours. Most open late morning and close around 5.",
+  more:"<p>Ann Street Antiques is big on vintage clothing, dishware and jewelry. Mix in coffee and the boutiques along Broad and Harford Streets.</p>",
+  addr:"214 Broad St, Milford, PA 18337", lat:41.3228, lng:-74.8020,
+  img:["Milford,_Pennsylvania"], area:true, links:[]},
+ {id:"ol", leg:"milford", cat:"shop", days:["thu","fri"], name:"Old Lumberyard Antiques",
+  blurb:"The big one: 40+ dealers in 10,000+ sq ft inside a converted lumberyard — furniture, lighting, glass, jewelry, pottery, mid-century and vintage toys.",
+  meta:["1–2 hrs","Free to browse"],
+  more:"<p>Dealers restock often, so it's a real treasure hunt. Pairs well with the Broad Street crawl.</p>",
+  addr:"Old Lumberyard Antiques, Milford, PA 18337", lat:41.3244, lng:-74.8000,
+  img:["Milford,_Pennsylvania"], area:true, links:[["Listing","https://discovernepa.com/listing/old-lumberyard-antiques/"]]},
+ {id:"rb", leg:"milford", cat:"scenic", days:["thu","fri"], name:"Roebling's Delaware Aqueduct (Lackawaxen)",
+  blurb:"The oldest wire suspension bridge in the US (1847), built by John Roebling before the Brooklyn Bridge. Walk across the river into New York.",
+  meta:["~1 hr there","+30 min drive each way","Free"],
+  warn:"The Zane Grey Museum next door has closed for the season — the bridge and riverbank are still worth it.",
+  more:"<p>A pretty river drive north of Milford. Best in late-afternoon light.</p>",
+  addr:"Roebling Bridge, Scenic Dr, Lackawaxen, PA 18435", lat:41.4832, lng:-74.9862,
+  img:["Delaware_Aqueduct"], links:[["NPS hours","https://www.nps.gov/upde/planyourvisit/hours.htm"]]},
+ {id:"di", leg:"milford", cat:"food", days:["thu"], name:"Dimmick Inn & Steakhouse",
+  blurb:"An 1828 tavern in the middle of town. Ask for the quieter back room with the big stone fireplace. Steaks, pizza, burgers.",
+  meta:["Dinner","$$"],
+  more:"<p>Lively bar up front, cozier in back. A good Thursday-night choice if you're tired from the drive.</p>",
+  addr:"101 E Harford St, Milford, PA 18337", lat:41.3224, lng:-74.8012,
+  img:["Milford,_Pennsylvania"], area:true, links:[]},
+ {id:"bl", leg:"milford", cat:"food", days:["thu"], name:"Anniversary dinner: Hotel Fauchère",
+  blurb:"Founded in 1852 by a chef from New York's famous Delmonico's. Dinner is now the Bar Louis menu, served in the elegant Delmonico Room — Milford's most special-occasion meal.",
+  meta:["Dinner","$$$","Reserve ahead"],
+  warn:"The old Delmonico tasting menu is gone (that room does brunch on weekends). Check dinner nights when you book — it has been closed early in the week before.",
+  more:"<p>Mention the anniversary when you reserve. Bar Louis downstairs is the more casual option in the same building.</p>",
+  addr:"401 Broad St, Milford, PA 18337", lat:41.3237, lng:-74.8012,
+  img:["Hotel_Fauchère","Milford,_Pennsylvania"], links:[["Reserve (OpenTable)","https://www.opentable.com/r/bar-louis-and-the-delmonico-room-at-the-hotel-fauchere-milford"]]},
+ {id:"ww", leg:"milford", cat:"food", days:["fri"], name:"Waterwheel Café, Bakery & Bar",
+  blurb:"Breakfast or lunch at the historic Upper Mill, where the old waterwheel still turns on Sawkill Creek. Pastries, hearty sandwiches, good coffee.",
+  meta:["Breakfast/lunch","$–$$"],
+  more:"<p>Grab pastries for the trail if you're starting early.</p>",
+  addr:"150 Water St, Milford, PA 18337", lat:41.3258, lng:-74.8040,
+  img:["Milford,_Pennsylvania"], area:true, links:[]},
+ {id:"md", leg:"milford", cat:"food", days:["fri"], name:"Milford Diner",
+  blurb:"Classic diner on Broad Street for a fast, hearty breakfast before the trail.",
+  meta:["Breakfast","$"],
+  more:"<p>The no-fuss option when you want to be hiking by 9.</p>",
+  addr:"301 Broad St, Milford, PA 18337", lat:41.3232, lng:-74.8018,
+  img:["Milford,_Pennsylvania"], area:true, links:[]},
+
+ /* ---------- falls & gap ---------- */
+ {id:"bf", leg:"falls", cat:"falls", days:["fri"], name:"Bushkill Falls",
+  blurb:"Eight waterfalls linked by boardwalks and wooden stairs in a deep gorge; the 100-ft Main Falls is the showstopper. Take the Red Trail (~2 mi) to see all eight, including Bridal Veil Falls.",
+  meta:["2–2.5 hrs","~$22 adult","Opens 10am late Oct"],
+  warn:"Privately run and seasonal, and closing times shift in late fall. Check same-day hours and buy tickets online.",
+  more:"<p>Lots of stairs down into the gorge and back out — more elevation than the mileage suggests. Snack bar and gift shops on site.</p>",
+  addr:"138 Bushkill Falls Trail, Bushkill, PA 18324", lat:41.1163, lng:-75.0084,
+  img:["Bushkill_Falls"], links:[["Official site","https://www.visitbushkillfalls.com"]]},
+ {id:"mt", leg:"falls", cat:"hike", hard:true, days:["fri","sat"], name:"Mount Tammany (Red Dot up, Blue down)",
+  blurb:"The classic Water Gap climb: a steep, rocky ~1,200-ft ascent to a ledge looking straight down the gap at the river and Mount Minsi. Come down the gentler Blue trail past Dunnfield Creek's cascades.",
+  meta:["2.5–3 hrs","Free","~3.5 mi loop"],
+  warn:"Very popular — the lot fills early on nice days. It's on the NJ side, at the first exit after crossing on I-80.",
+  more:"<p>Hike up the Red Dot (steeper) and down the Blue (easier on knees). Real scrambling in places, so wear proper shoes. Best view of the whole trip.</p>",
+  addr:"Dunnfield Creek Parking, Old Mine Rd, Columbia, NJ 07832", lat:40.9713, lng:-75.1253,
+  img:["Mount_Tammany"], links:[["NPS trail page","https://www.nps.gov/dewa/planyourvisit/red-dot-trail.htm"]]},
+ {id:"mm", leg:"falls", cat:"hike", hard:true, days:["fri","sat"], name:"Mount Minsi via the Appalachian Trail",
+  blurb:"Tammany's Pennsylvania twin: a ~5-mile loop on the AT through rhododendron tunnels to Lookout Rock, with a face-on view of Tammany. Quieter, and it starts in the village.",
+  meta:["2.5–3 hrs","Free","~1,000 ft gain"],
+  more:"<p>Park at the Lake Lenape lot on Mountain Rd. Lookout Rock is ~1.3 mi up; continue to the old fire-tower footings at the summit and loop back on the fire road. Pie at Village Farmer afterward is practically mandatory.</p>",
+  addr:"Lake Lenape Parking, Mountain Rd, Delaware Water Gap, PA 18327", lat:40.9799, lng:-75.1421,
+  img:["Mount_Minsi"], links:[]},
+ {id:"vf", leg:"falls", cat:"food", days:["fri","sat"], name:"Village Farmer & Bakery",
+  blurb:"A roadside bakery since 1976 known for its fruit pies and pot pies. Grab a slice, or a whole pie for the road.",
+  meta:["Snack/lunch","$"],
+  more:"<p>30-plus pie flavors rotate through the year. Fall means apple and pumpkin.</p>",
+  addr:"13 Broad St, Delaware Water Gap, PA 18327", lat:40.9822, lng:-75.1438,
+  img:["Delaware_Water_Gap,_Pennsylvania"], area:true, links:[]},
+ {id:"dh", leg:"falls", cat:"food", days:["fri"], name:"Deer Head Inn — dinner & live jazz",
+  blurb:"Billed as the oldest continuously running jazz club in the country, in an 1869 inn. Live music Thursday–Sunday and a comfort-food dinner menu.",
+  meta:["Dinner","$$","Music Thu–Sun"],
+  more:"<p>Check the music calendar. It has rooms upstairs too (see Friday beds).</p>",
+  addr:"5 Main St, Delaware Water Gap, PA 18327", lat:40.9832, lng:-75.1430,
+  img:["Deer_Head_Inn","Delaware_Water_Gap,_Pennsylvania"], links:[]},
+
+ /* ---------- stroudsburg ---------- */
+ {id:"oe", leg:"stroud", cat:"shop", days:["fri","sat"], name:"Olde Engine Works Market Place",
+  blurb:"Close to 100 vendors in a 22,000-sq-ft machine shop built in 1903. You can lose hours here, and vendors carry vintage Christmas decorations too.",
+  meta:["1.5–2+ hrs","Daily 10–5"],
+  more:"<p>Prices are fair and the stock turns over constantly. Get there by 3 on Friday if you want time to dig.</p>",
+  addr:"62 N 3rd St, Stroudsburg, PA 18360", lat:40.9882, lng:-75.1937,
+  img:["Stroudsburg,_Pennsylvania"], area:true, links:[["Listing","https://discovernepa.com/listing/the-olde-engine-works/"]]},
+ {id:"ms", leg:"stroud", cat:"shop", days:["fri"], name:"Main Street Stroudsburg stroll",
+  blurb:"A Victorian Main Street with boutiques, galleries, a floor-to-ceiling candy shop, a used bookstore and coffee. An easy evening wander before dinner.",
+  meta:["45 min–1.5 hrs","Free"],
+  more:"<p>Park once and walk. Most restaurants below are within a block or two.</p>",
+  addr:"Main St & 7th St, Stroudsburg, PA 18360", lat:40.9857, lng:-75.1962,
+  img:["Stroudsburg,_Pennsylvania"], area:true, links:[]},
+ {id:"si", leg:"stroud", cat:"food", days:["fri"], name:"Siamsa Irish Pub",
+  blurb:"An upscale Irish pub in an old bank building. Locals rate its fish and chips the best on Main Street, and there's a cozy cocktail lounge upstairs.",
+  meta:["Dinner","$$"],
+  more:"<p>Bangers and mash, a long tap list, and Irish breakfast served all day.</p>",
+  addr:"636 Main St, Stroudsburg, PA 18360", lat:40.9855, lng:-75.1957,
+  img:["Stroudsburg,_Pennsylvania"], area:true, links:[]},
+ {id:"ss", leg:"stroud", cat:"food", days:["fri"], name:"Sarah Street Grill",
+  blurb:"A big, lively menu that runs from sushi to pub classics, tucked just off Main Street.",
+  meta:["Dinner","$$"],
+  more:"<p>Good when you can't agree on what you're craving.</p>",
+  addr:"550 Quaker Alley, Stroudsburg, PA 18360", lat:40.9852, lng:-75.1947,
+  img:["Stroudsburg,_Pennsylvania"], area:true, links:[]},
+
+ /* ---------- friday beds ---------- */
+ {id:"sm", leg:"sleep", cat:"sleep", days:["fri"], name:"Stroudsmoor Country Inn",
+  blurb:"A mountaintop inn on 200+ acres above Stroudsburg. Ledgemere suites have fireplaces and whirlpool tubs, and there's a spa and an on-site restaurant. The romantic pick.",
+  meta:["Rooms from ~$130 off-peak","Suites more"],
+  more:"<p>Ask specifically for a Ledgemere suite for the anniversary. Five minutes from downtown.</p>",
+  addr:"257 Stroudsmoor Rd, Stroudsburg, PA 18360", lat:40.9746, lng:-75.2232,
+  img:["Stroudsburg,_Pennsylvania"], area:true, links:[["Listing","https://discovernepa.com/listing/stroudsmoor-country-inn/"]]},
+ {id:"dx", leg:"sleep", cat:"sleep", days:["fri"], name:"Deer Head Inn rooms",
+  blurb:"Old-fashioned rooms upstairs from the jazz club: no TVs, wood floors, a porch, and steps from the Mount Minsi trailhead for a Saturday-morning hike.",
+  meta:["About 10 rooms","Weekend breakfast"],
+  more:"<p>No elevator and simple rooms. You're paying for the charm and the music.</p>",
+  addr:"5 Main St, Delaware Water Gap, PA 18327", lat:40.9834, lng:-75.1426,
+  img:["Deer_Head_Inn","Delaware_Water_Gap,_Pennsylvania"], links:[]},
+ {id:"ps", leg:"sleep", cat:"sleep", days:["fri"], name:"The Penn Stroud Hotel",
+  blurb:"A historic hotel right on Main Street. Walk to dinner and the shops, and walk back.",
+  meta:["Downtown","Mid-range"],
+  more:"<p>The practical choice when you've had a long day and don't want to drive again.</p>",
+  addr:"700 Main St, Stroudsburg, PA 18360", lat:40.9858, lng:-75.1972,
+  img:["Stroudsburg,_Pennsylvania"], area:true, links:[]},
+ {id:"ij", leg:"sleep", cat:"sleep", days:["fri"], name:"The Inn at Jim Thorpe",
+  blurb:"An 1849 grand hotel with iron balconies on Broadway, with some rooms that have fireplaces and whirlpool tubs. Sleeping here puts you in Jim Thorpe on Saturday morning (~50 min west of Stroudsburg).",
+  meta:["Historic","Pub downstairs"],
+  more:"<p>Push on Friday evening, then wake up to the shops, the mansion and the train.</p>",
+  addr:"24 Broadway, Jim Thorpe, PA 18229", lat:40.8648, lng:-75.7381,
+  img:["Jim_Thorpe,_Pennsylvania"], area:true, links:[["Listing","https://discovernepa.com/listing/the-inn-at-jim-thorpe-broadway-grille/"]]},
+
+ /* ---------- drive home ---------- */
+ {id:"hr", leg:"home", cat:"scenic", days:["sat"], name:"Hickory Run Boulder Field & Hawk Falls",
+  blurb:"A National Natural Landmark: a huge, eerie field of Ice Age boulders you can hop across, plus a short trail to 25-ft Hawk Falls. About 10 minutes off I-80.",
+  meta:["1–2 hrs","Free"],
+  more:"<p>The Boulder Field has its own lot at the end of a gravel park road. Hawk Falls is a ~0.6-mile trail off PA-534. Spotty cell service, so load directions before you go.</p>",
+  addr:"Boulder Field, Hickory Run State Park, White Haven, PA 18661", lat:41.0570, lng:-75.6440,
+  img:["Hickory_Run_State_Park"], links:[["Park info","https://www.pa.gov/agencies/dcnr/recreation/where-to-go/state-parks/find-a-park/hickory-run-state-park"]]},
+ {id:"jt", leg:"home", cat:"shop", days:["sat"], name:"Jim Thorpe: Broadway antiques & shops",
+  blurb:"The 'Switzerland of America': a Victorian railroad town tucked into a gorge. Antiques on Broadway (52 Broadway) has Victrolas, quilts and glass, and there are indie shops and cafés all along the street.",
+  meta:["2–3 hrs","~45 min from Stroudsburg"],
+  warn:"Saturdays in October are busy, so arrive before 11 for easy parking.",
+  more:"<p>Add the mansion, the Christmas shop and the train below to make it a half day.</p>",
+  addr:"52 Broadway, Jim Thorpe, PA 18229", lat:40.8652, lng:-75.7392,
+  img:["Jim_Thorpe,_Pennsylvania"], links:[]},
+ {id:"jb", leg:"home", cat:"shop", xmas:true, days:["sat"], name:"Jingle Bells Christmas Shoppe",
+  blurb:"A year-round Christmas shop in a Victorian farmhouse: hand-painted German Inge-Glas ornaments, garlands, candles, and ornaments of Jim Thorpe itself.",
+  meta:["30–45 min","Jim Thorpe"],
+  more:"<p>Small but packed — her kind of place. Use the Google Maps link for the exact spot.</p>",
+  addr:"Jingle Bells Christmas Shoppe, Jim Thorpe, PA 18229", lat:40.8668, lng:-75.7370,
+  img:["Jim_Thorpe,_Pennsylvania"], area:true, links:[["Listing","https://discovernepa.com/listing/jingle-bells-christmas-shoppe"]]},
+ {id:"ap", leg:"home", cat:"history", days:["sat"], name:"Asa Packer Mansion",
+  blurb:"The 1861 Italianate villa of the railroad baron who founded Lehigh University, kept essentially as the family lived in it. Guided tours.",
+  meta:["~45 min tour","Small fee"],
+  warn:"Tours have run roughly 11:15–4:15 in season; confirm Saturday hours.",
+  more:"<p>No on-site parking — park by the train station and walk up the hill behind the courthouse.</p>",
+  addr:"Packer Hill Ave, Jim Thorpe, PA 18229", lat:40.8644, lng:-75.7408,
+  img:["Asa_Packer_Mansion"], links:[]},
+ {id:"lg", leg:"home", cat:"scenic", days:["sat"], name:"Lehigh Gorge Scenic Railway",
+  blurb:"A 45-minute fall-foliage train along the Lehigh River from downtown Jim Thorpe. It runs daily through Nov 15.",
+  meta:["45 min","Fare varies"],
+  warn:"Saturday departure times for Oct 24 weren't posted when this was made. Check and book ahead.",
+  more:"<p>A relaxing way to see the gorge after a hiking-heavy trip.</p>",
+  addr:"Lehigh Gorge Scenic Railway, 1 Susquehanna St, Jim Thorpe, PA 18229", lat:40.8638, lng:-75.7366,
+  img:["Lehigh_Gorge_Scenic_Railway","Jim_Thorpe,_Pennsylvania"], links:[["Schedule listing","https://discovernepa.com/event/autumn-leaf-train-ride-2/2026-10-22/"]]}
+];
+const BY_ID = Object.fromEntries(ITEMS.map(i=>[i.id,i]));
+
+const HEADS = [
+  "<b>Dingmans Falls</b> has been closed for construction; reopening was estimated for summer 2026 but isn't confirmed. Check before driving, and use Childs Park as the backup.",
+  "<b>The Christmas Factory</b> in Marshalls Creek (the big Pocono Christmas store you'll still see in old listings) <b>closed in 2018</b>. Go to Jingle Bells in Jim Thorpe or the Moravian Book Shop instead.",
+  "<b>Bushkill Falls</b> opens at 10am in late October, and closing times shift in late fall. Check same-day hours.",
+  "<b>Grey Towers</b> mansion tours run only on certain days (Fri–Mon last year). The grounds are free daily.",
+  "<b>Hotel Fauchère:</b> the old Delmonico tasting menu is brunch-only now. Dinner is the Bar Louis menu. Reserve.",
+  "<b>Antique shops</b> mostly close around 5pm, so do the shopping before the hike or make it the afternoon plan.",
+  "<b>Foliage:</b> by Oct 22–24 the Poconos are likely just past peak. Lower ridges like Hawk Mountain usually peak later in October.",
+  "<b>Friday night</b> is unbooked by design — call ahead from the road, since inns can fill up on fall weekends."
+];
+
+const SUGGESTED = {
+  order:["mb","rf","ma","bl","ww","cp","bf","vf","oe","si","sm","hr","jt","jb"],
+  days:{mb:"thu",rf:"thu",ma:"thu",bl:"thu",ww:"fri",cp:"fri",bf:"fri",vf:"fri",oe:"fri",si:"fri",sm:"fri",hr:"sat",jt:"sat",jb:"sat"}
+};
+
+/* ---------------- state ---------------- */
+const LS_STATE="mlfd-state-v1", LS_SLOTS="mlfd-slots-v1", LS_IMG="mlfd-img-v1", LS_ACTIVE="mlfd-active-slot-v1";
+function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
+function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+
+function emptyState(){return {order:[], pick:{}, drawer:[]}}
+function clone(s){return JSON.parse(JSON.stringify(s))}
+function normalize(s){
+  const out=emptyState(); if(!s||typeof s!=="object") return out;
+  const seen=new Set();
+  (Array.isArray(s.order)?s.order:[]).forEach(id=>{
+    if(!BY_ID[id]||seen.has(id)) return; seen.add(id);
+    const p=(s.pick&&s.pick[id])||{};
+    const d=["thu","fri","sat","u"].includes(p.d)?p.d:(BY_ID[id].days[0]||"u");
+    const t=/^\d{2}:\d{2}$/.test(p.t||"")?p.t:"";
+    out.order.push(id); out.pick[id]={d,t};
+  });
+  (Array.isArray(s.drawer)?s.drawer:[]).forEach(id=>{ if(BY_ID[id]&&!seen.has(id)&&!out.drawer.includes(id)) out.drawer.push(id); });
+  return out;
+}
+let S = (function(){ try{ return normalize(JSON.parse(lsGet(LS_STATE)||"null")); }catch(e){ return emptyState(); } })();
+let importInfo = null; // {prev, diff}
+let activeSlot = (function(){const v=parseInt(lsGet(LS_ACTIVE),10);return isNaN(v)?-1:v})();
+
+function persist(){ lsSet(LS_STATE, JSON.stringify(S)); updateDirty(); }
+
+/* ---------------- encode / decode ---------------- */
+const PREFIX="MLFD1";
+function encode(s){
+  const p=s.order.map(id=>id+"."+s.pick[id].d+"."+(s.pick[id].t||"").replace(":","")).join(",");
+  return PREFIX+"|p="+p+"|x="+s.drawer.join(",");
+}
+function decode(text){
+  if(typeof text!=="string") return null;
+  const m=text.match(/MLFD1\|p=([a-z0-9.,]*)\|x=([a-z0-9,]*)/i);
+  if(!m) return null;
+  const s=emptyState();
+  if(m[1]) m[1].split(",").forEach(tok=>{
+    const [id,d,t]=tok.toLowerCase().split(".");
+    if(!BY_ID[id]||s.pick[id]) return;
+    const day=["thu","fri","sat","u"].includes(d)?d:"u";
+    const time=/^\d{4}$/.test(t||"")?(t.slice(0,2)+":"+t.slice(2)):"";
+    s.order.push(id); s.pick[id]={d:day,t:time};
+  });
+  if(m[2]) m[2].toLowerCase().split(",").forEach(id=>{ if(BY_ID[id]&&!s.pick[id]&&!s.drawer.includes(id)) s.drawer.push(id); });
+  return normalize(s);
+}
+function fmtTime(t){ if(!t) return ""; let [h,m]=t.split(":").map(Number); const ap=h>=12?"pm":"am"; h=h%12||12; return h+(m?":"+String(m).padStart(2,"0"):"")+ap; }
+function dayItems(s,d){ return s.order.filter(id=>s.pick[id].d===d); }
+function summaryText(s){
+  const lines=["🍂 Our Milford trip plan"];
+  DAYS.forEach(([d])=>{
+    const ids=dayItems(s,d); if(!ids.length) return;
+    lines.push(""); lines.push(DAY_LABEL[d].toUpperCase());
+    ids.forEach(id=>{ const t=s.pick[id].t; lines.push("• "+(t?fmtTime(t)+" ":"")+BY_ID[id].name); });
+  });
+  if(!s.order.length){ lines.push(""); lines.push("(nothing picked yet)"); }
+  if(s.drawer.length){ lines.push(""); lines.push("Put away: "+s.drawer.map(id=>BY_ID[id].name).join("; ")); }
+  lines.push(""); lines.push("Paste this whole message into “Import a plan”:");
+  lines.push(encode(s));
+  return lines.join("\n");
+}
+
+/* ---------------- diff ---------------- */
+function lcs(a,b){
+  const n=a.length,m=b.length,dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const keep=new Set();let i=0,j=0;
+  while(i<n&&j<m){ if(a[i]===b[j]){keep.add(a[i]);i++;j++;} else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
+  return keep;
+}
+function computeDiff(prev,next){
+  const d={added:[],removed:[],moved:[],retimed:[],drawered:[],undrawered:[]};
+  next.order.forEach(id=>{ if(!prev.pick[id]) d.added.push(id); });
+  prev.order.forEach(id=>{ if(!next.pick[id]) d.removed.push(id); });
+  const common=next.order.filter(id=>prev.pick[id]);
+  const dayChanged=new Set(common.filter(id=>prev.pick[id].d!==next.pick[id].d));
+  DAYS.forEach(([day])=>{
+    const a=prev.order.filter(id=>next.pick[id]&&!dayChanged.has(id)&&prev.pick[id].d===day);
+    const b=next.order.filter(id=>prev.pick[id]&&!dayChanged.has(id)&&next.pick[id].d===day);
+    const keep=lcs(a,b);
+    b.forEach(id=>{ if(!keep.has(id)) d.moved.push(id); });
+  });
+  dayChanged.forEach(id=>d.moved.push(id));
+  common.forEach(id=>{ if((prev.pick[id].t||"")!==(next.pick[id].t||"")) d.retimed.push(id); });
+  next.drawer.forEach(id=>{ if(!prev.drawer.includes(id)) d.drawered.push(id); });
+  prev.drawer.forEach(id=>{ if(!next.drawer.includes(id)&&!next.pick[id]) d.undrawered.push(id); });
+  d.total=d.added.length+d.removed.length+d.moved.length+d.retimed.length+d.drawered.length+d.undrawered.length;
+  return d;
+}
+
+/* ---------------- mutations ---------------- */
+function clearImport(){ if(importInfo){ importInfo=null; } }
+function pickItem(id,day){
+  const it=BY_ID[id]; if(!it) return;
+  S.drawer=S.drawer.filter(x=>x!==id);
+  if(!S.pick[id]){ S.order.push(id); S.pick[id]={d:day||it.days[0]||"u",t:""}; }
+  else if(day){ S.pick[id].d=day; }
+  clearImport(); persist(); renderAll();
+}
+function unpick(id){
+  if(!S.pick[id]) return;
+  S.order=S.order.filter(x=>x!==id); delete S.pick[id];
+  clearImport(); persist(); renderAll();
+}
+function toDrawer(id){
+  if(S.pick[id]){ S.order=S.order.filter(x=>x!==id); delete S.pick[id]; }
+  if(!S.drawer.includes(id)) S.drawer.push(id);
+  clearImport(); persist(); renderAll();
+  toast("Put in the drawer");
+}
+function fromDrawer(id){ S.drawer=S.drawer.filter(x=>x!==id); persist(); renderAll(); }
+function setTime(id,t){ if(!S.pick[id]) return; S.pick[id].t=t||""; clearImport(); persist(); renderPlanBannerOnly(); renderMapIfReady(); }
+function setDay(id,d){ if(!S.pick[id]) return; S.pick[id].d=d; // move to end of that day group
+  S.order=S.order.filter(x=>x!==id); S.order.push(id); clearImport(); persist(); renderAll(); }
+function applyState(next){ S=normalize(next); persist(); renderAll(); }
+
+/* ---------------- images ---------------- */
+let imgCache={}; try{ imgCache=JSON.parse(lsGet(LS_IMG)||"{}")||{}; }catch(e){ imgCache={}; }
+const imgPending={};
+function saveImgCache(){ lsSet(LS_IMG, JSON.stringify(imgCache)); }
+function upsize(url,w){ return url.replace(/\/(\d+)px-/, "/"+w+"px-"); }
+function fetchSummary(title){
+  if(title in imgCache) return Promise.resolve(imgCache[title]);
+  if(imgPending[title]) return imgPending[title];
+  if(typeof fetch!=="function") return Promise.resolve(null);
+  imgPending[title]=fetch("https://en.wikipedia.org/api/rest_v1/page/summary/"+encodeURIComponent(title),{headers:{"Accept":"application/json"}})
+    .then(r=>r.ok?r.json():null)
+    .then(j=>{ const src=j&&j.thumbnail&&j.thumbnail.source&&!/\.svg/i.test(j.thumbnail.source)?j.thumbnail.source:"";
+               const page=j&&j.content_urls&&j.content_urls.mobile?j.content_urls.mobile.page:"";
+               imgCache[title]=src?{src,page}:""; saveImgCache(); return imgCache[title]; })
+    .catch(()=>null);
+  return imgPending[title];
+}
+async function resolveImg(item){
+  for(const t of item.img||[]){ const r=await fetchSummary(t); if(r&&r.src) return {src:r.src,page:r.page,title:t}; }
+  return null;
+}
+function hydrateImages(root){
+  root.querySelectorAll("[data-img]").forEach(el=>{
+    if(el.dataset.done) return; el.dataset.done="1";
+    const item=BY_ID[el.dataset.img]; const big=el.dataset.size==="big";
+    resolveImg(item).then(r=>{
+      if(!r) return;
+      const img=document.createElement("img"); img.alt=item.name; img.loading="lazy"; img.decoding="async";
+      img.referrerPolicy="no-referrer";
+      img.onload=()=>{ img.classList.add("on"); const e=el.querySelector(".emo"); if(e) e.classList.add("hide"); };
+      img.onerror=()=>{ if(img.dataset.fb) { img.remove(); return; } img.dataset.fb="1"; img.src=r.src; };
+      img.src=big?upsize(r.src,640):r.src;
+      el.insertBefore(img, el.firstChild);
+      const cr=el.querySelector(".credit");
+      if(cr){ cr.textContent=item.area||r.title!==item.img[0]?"area photo · Wikipedia":"Wikipedia"; if(r.page) cr.href=r.page; }
+    });
+  });
+}
+const galleryDone={};
+function loadGallery(item,box){
+  if(galleryDone[item.id]||item.area||typeof fetch!=="function") return; galleryDone[item.id]=true;
+  fetch("https://en.wikipedia.org/api/rest_v1/page/media-list/"+encodeURIComponent(item.img[0]))
+    .then(r=>r.ok?r.json():null).then(j=>{
+      if(!j||!j.items) return;
+      const pics=j.items.filter(x=>x.type==="image"&&x.showInGallery!==false&&x.srcset&&x.srcset.length&&!/\.(svg|png)$/i.test(x.title||"")).slice(0,5);
+      if(pics.length<2) return;
+      box.innerHTML=pics.map(p=>{ let s=p.srcset[0].src; if(s.startsWith("//")) s="https:"+s; return '<img loading="lazy" referrerpolicy="no-referrer" alt="" src="'+esc(s)+'" onerror="this.remove()">'; }).join("");
+    }).catch(()=>{});
+}
+
+/* ---------------- render helpers ---------------- */
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function gmaps(item){ return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(item.name.replace(/[—:].*$/,"").trim()+" "+item.addr); }
+function emo(item){ return item.xmas?"🎄":CATS[item.cat].emoji; }
+
+const F={leg:"all",cat:"all"};
+function renderFilters(){
+  const legC=document.getElementById("fLeg"), catC=document.getElementById("fCat");
+  legC.innerHTML=[["all","Everywhere"]].concat(LEG_ORDER.map(k=>[k,LEGS[k].label])).map(([k,l])=>'<button class="chip" data-leg="'+k+'" aria-pressed="'+(F.leg===k)+'">'+esc(l)+'</button>').join("");
+  catC.innerHTML=[["all","Everything"]].concat(CAT_ORDER.map(k=>[k,CATS[k].emoji+" "+CATS[k].label])).map(([k,l])=>'<button class="chip" data-cat="'+k+'" aria-pressed="'+(F.cat===k)+'">'+esc(l)+'</button>').join("");
+}
+function cardHTML(it){
+  const p=S.pick[it.id];
+  const tags=[]; if(it.hard) tags.push('<span class="tag hard">Harder hike</span>');
+  if(it.warn) tags.push('<span class="tag warn">Check first</span>');
+  if(p) tags.push('<span class="tag">♥ '+esc(DAY_LABEL[p.d])+'</span>');
+  const links=['<a href="'+esc(gmaps(it))+'" target="_blank" rel="noopener">Google Maps ↗</a>'].concat((it.links||[]).map(([l,u])=>'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(l)+' ↗</a>'));
+  return '<article class="card'+(p?' picked':'')+'" data-id="'+it.id+'">'+
+    '<div class="ph" data-img="'+it.id+'" data-size="big"><div class="emo">'+emo(it)+'</div><div class="tags">'+tags.join("")+'</div><a class="credit" target="_blank" rel="noopener"></a></div>'+
+    '<div class="cbody"><h3>'+esc(it.name)+'</h3><p class="blurb">'+esc(it.blurb)+'</p>'+
+    '<div class="meta">'+it.meta.map(m=>'<span>'+esc(m)+'</span>').join("")+'</div>'+
+    (it.warn?'<div class="warnline">⚠️ '+esc(it.warn)+'</div>':'')+
+    '<div class="more" id="more-'+it.id+'">'+it.more+'<p style="font-size:13px;color:var(--muted)">📍 '+esc(it.addr)+'</p><div class="gallery" id="gal-'+it.id+'"></div><div class="links">'+links.join("")+'</div></div>'+
+    '<div class="actions">'+
+      (p? '<div class="daypick" role="group" aria-label="Which day">'+DAYS.map(([d,l])=>'<button data-act="day" data-d="'+d+'" aria-pressed="'+(p.d===d)+'">'+esc(d==="u"?"?":l.split(" ")[0])+'</button>').join("")+'</div>'+
+          '<button class="btn xs ghost" data-act="unpick" aria-label="Remove from plan">Unpick</button>'
+        : '<button class="btn sm primary" data-act="pick">♥ Pick</button><button class="btn sm ghost" data-act="drawer">Put away</button>')+
+      '<span style="flex:1"></span><button class="btn xs ghost" data-act="more" aria-expanded="false">More</button>'+
+    '</div></div></article>';
+}
+function renderExplore(){
+  const box=document.getElementById("exploreList");
+  const vis=ITEMS.filter(it=>!S.drawer.includes(it.id)&&(F.leg==="all"||it.leg===F.leg)&&(F.cat==="all"||it.cat===F.cat));
+  if(!vis.length){ box.innerHTML='<div class="empty">Nothing here with these filters'+(S.drawer.length?' — some ideas may be in the drawer.':'.')+'</div>'; return; }
+  let html="";
+  LEG_ORDER.forEach(leg=>{
+    const its=vis.filter(it=>it.leg===leg); if(!its.length) return;
+    html+='<div class="leg-h"><h2>'+esc(LEGS[leg].title)+'</h2><p>'+esc(LEGS[leg].sub)+'</p></div><div class="grid">'+its.map(cardHTML).join("")+'</div>';
+  });
+  box.innerHTML=html; hydrateImages(box);
+}
+function renderHeads(){
+  document.getElementById("headsList").innerHTML=HEADS.map(h=>"<li>"+h+"</li>").join("");
+  document.getElementById("hCount").textContent=HEADS.length;
+}
+function rowHTML(id){
+  const it=BY_ID[id], p=S.pick[id]; const d=importInfo?importInfo.diff:null;
+  let cls="", badge="";
+  if(d){ if(d.added.includes(id)){cls=" hl-added";badge='<span class="badge add">new</span>';}
+         else if(d.moved.includes(id)){cls=" hl-moved";badge='<span class="badge">moved</span>';}
+         else if(d.retimed.includes(id)){cls=" hl-retimed";badge='<span class="badge">time</span>';} }
+  return '<li class="prow'+cls+'" data-id="'+id+'">'+
+    '<span class="handle" aria-label="Drag to reorder">⠿</span>'+
+    '<div class="thumb" data-img="'+id+'"><div class="emo">'+emo(it)+'</div></div>'+
+    '<div><div class="pname">'+esc(it.name)+' '+badge+'</div>'+
+      '<div class="psub"><input type="time" value="'+esc(p.t)+'" data-act="time" aria-label="Optional time" step="900">'+
+      '<select data-act="setday" aria-label="Day">'+DAYS.map(([dd,l])=>'<option value="'+dd+'"'+(dd===p.d?' selected':'')+'>'+esc(l)+'</option>').join("")+'</select>'+
+      '<a href="'+esc(gmaps(it))+'" target="_blank" rel="noopener">map ↗</a></div></div>'+
+    '<div class="pbtns"><button class="iconbtn" data-act="unpick" title="Back to Explore" aria-label="Unpick">✕</button><button class="iconbtn" data-act="drawer" title="Put in drawer" aria-label="Put in drawer">⤓</button></div>'+
+  '</li>';
+}
+function dirUrl(ids){
+  if(!ids.length) return "";
+  const pts=ids.map(id=>BY_ID[id].lat+","+BY_ID[id].lng);
+  const dest=pts.pop();
+  let u="https://www.google.com/maps/dir/?api=1&travelmode=driving&destination="+encodeURIComponent(dest);
+  if(pts.length) u+="&waypoints="+encodeURIComponent(pts.slice(0,9).join("|"));
+  return u;
+}
+function bannerHTML(){
+  if(!importInfo) return "";
+  const d=importInfo.diff; const parts=[];
+  if(d.added.length) parts.push(d.added.length+" added");
+  if(d.moved.length) parts.push(d.moved.length+" moved");
+  if(d.retimed.length) parts.push(d.retimed.length+" retimed");
+  if(d.removed.length) parts.push(d.removed.length+" removed");
+  if(d.drawered.length) parts.push(d.drawered.length+" put away");
+  if(d.undrawered.length) parts.push(d.undrawered.length+" back from drawer");
+  const rem=d.removed.length?'<div style="margin-top:6px;font-size:13px">Removed: '+d.removed.map(id=>esc(BY_ID[id].name)).join(", ")+'</div>':'';
+  return '<div class="banner">📩 <b>Updated from text.</b> '+(d.total?parts.join(" · "):"No changes — it matched what you had.")+rem+
+    '<div class="row"><button class="btn xs" id="bUndo">Undo import</button><button class="btn xs ghost" id="bDismiss">Dismiss</button></div></div>';
+}
+function renderPlanBannerOnly(){ document.getElementById("importBanner").innerHTML=bannerHTML(); }
+let sortables=[];
+function renderPlan(){
+  renderPlanBannerOnly();
+  const box=document.getElementById("planDays");
+  if(!S.order.length){
+    box.innerHTML='<div class="empty">Nothing picked yet.<br>Tap <b>♥ Pick</b> on cards in Explore, or <b>✨ Load a suggested plan</b> to start from mine.</div>';
+    sortables.forEach(s=>s.destroy()); sortables=[]; return;
+  }
+  box.innerHTML=DAYS.map(([d,l,long])=>{
+    const ids=dayItems(S,d); if(d==="u"&&!ids.length) return "";
+    const u=dirUrl(ids);
+    return '<div class="day"><div class="day-h"><i class="dot" style="background:var(--'+d+')"></i><h2>'+esc(d==="u"?"Anytime / not sure":long+" · "+l.split(" ")[1])+'</h2><span class="spacer"></span>'+
+      (u?'<a class="btn xs" href="'+esc(u)+'" target="_blank" rel="noopener">Directions ↗</a>':'')+'</div>'+
+      '<ul class="plan-list" data-day="'+d+'">'+ids.map(rowHTML).join("")+'</ul></div>';
+  }).join("");
+  hydrateImages(box);
+  sortables.forEach(s=>s.destroy()); sortables=[];
+  if(window.Sortable){
+    box.querySelectorAll(".plan-list").forEach(ul=>{
+      sortables.push(new Sortable(ul,{group:"plan",handle:".handle",animation:160,delay:0,onEnd:syncFromDom}));
+    });
+  }
+}
+function syncFromDom(){
+  const order=[];
+  document.querySelectorAll("#planDays .plan-list").forEach(ul=>{
+    const d=ul.dataset.day;
+    ul.querySelectorAll(".prow").forEach(li=>{ const id=li.dataset.id; if(S.pick[id]){ S.pick[id].d=d; order.push(id); } });
+  });
+  S.order.forEach(id=>{ if(!order.includes(id)) order.push(id); });
+  S.order=order; clearImport(); persist(); renderAll();
+}
+function renderDrawer(){
+  const box=document.getElementById("drawerList");
+  if(!S.drawer.length){ box.innerHTML='<div class="empty">The drawer is empty.</div>'; return; }
+  box.innerHTML=S.drawer.map(id=>{ const it=BY_ID[id];
+    return '<div class="drow" data-id="'+id+'"><div class="thumb" data-img="'+id+'"><div class="emo">'+emo(it)+'</div></div><div class="pname">'+esc(it.name)+'<div class="psub">'+esc(LEGS[it.leg].label)+'</div></div>'+
+      '<button class="btn xs" data-act="undrawer">Bring back</button><button class="btn xs primary" data-act="pick">♥</button></div>'; }).join("");
+  hydrateImages(box);
+}
+function renderCounts(){
+  document.getElementById("cPlan").textContent=S.order.length||"";
+  document.getElementById("cDrawer").textContent=S.drawer.length||"";
+}
+function renderAll(){ renderFilters(); renderExplore(); renderPlan(); renderDrawer(); renderCounts(); renderMapIfReady(); }
+
+/* ---------------- map ---------------- */
+let map=null, mapLayer=null, tileIdx=0, tileLayer=null, tileErr=0, tileOk=0;
+const TILES=[
+  ["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}],
+  ["https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",{maxZoom:19,subdomains:"abcd",attribution:'&copy; OpenStreetMap &copy; CARTO'}],
+  ["https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",{maxZoom:19,attribution:'Tiles &copy; Esri'}]
+];
+function setTiles(i){
+  if(tileLayer) map.removeLayer(tileLayer);
+  tileIdx=i; tileErr=0; tileOk=0;
+  tileLayer=L.tileLayer(TILES[i][0],TILES[i][1]).addTo(map);
+  tileLayer.on("tileerror",()=>{ tileErr++; if(tileErr>=6&&tileOk<tileErr/2&&tileIdx<TILES.length-1){ setTiles(tileIdx+1); document.getElementById("tileNote").textContent="Switched to backup map tiles."; } });
+  tileLayer.on("tileload",()=>{ tileOk++; });
+}
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim()||"#888"; }
+function initMap(){
+  if(map||!window.L) { if(!window.L) document.getElementById("tileNote").textContent="Map library didn't load — check your connection."; return; }
+  map=L.map("map",{zoomControl:true,scrollWheelZoom:false,tap:true});
+  setTiles(0);
+  mapLayer=L.layerGroup().addTo(map);
+  renderMap(true);
+}
+function renderMapIfReady(){ if(map) renderMap(false); }
+function renderMap(fit){
+  if(!map) return;
+  mapLayer.clearLayers();
+  const showAll=document.getElementById("mShowAll").checked, showDrawer=document.getElementById("mShowDrawer").checked;
+  const bounds=[];
+  const home=L.marker([HOME.lat,HOME.lng],{icon:L.divIcon({className:"",html:'<div class="pin home">⌂</div>',iconSize:[24,24],iconAnchor:[12,12]})}).bindPopup("<b>Home</b><br>Fairfield, PA");
+  mapLayer.addLayer(home);
+  DAYS.forEach(([d])=>{
+    const ids=dayItems(S,d); if(!ids.length) return;
+    const col=cssVar("--"+d);
+    if(d!=="u"&&ids.length>1) mapLayer.addLayer(L.polyline(ids.map(id=>[BY_ID[id].lat,BY_ID[id].lng]),{color:col,weight:3,opacity:.75,dashArray:"6 6"}));
+    ids.forEach((id,i)=>{ const it=BY_ID[id];
+      const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:"",html:'<div class="pin" style="background:'+col+'">'+(i+1)+'</div>',iconSize:[26,26],iconAnchor:[13,13]}),zIndexOffset:1000});
+      m.bindPopup(popupHTML(it)); mapLayer.addLayer(m); bounds.push([it.lat,it.lng]); });
+  });
+  ITEMS.forEach(it=>{
+    if(S.pick[it.id]) return;
+    const inDrawer=S.drawer.includes(it.id);
+    if(inDrawer&&!showDrawer) return; if(!inDrawer&&!showAll) return;
+    const m=L.marker([it.lat,it.lng],{icon:L.divIcon({className:"",html:'<div class="pin dim" style="background:'+(inDrawer?"#c9c2b2":"#8d8d8d")+'"></div>',iconSize:[16,16],iconAnchor:[8,8]})});
+    m.bindPopup(popupHTML(it)); mapLayer.addLayer(m); if(!S.order.length) bounds.push([it.lat,it.lng]);
+  });
+  if(fit){ if(bounds.length) map.fitBounds(bounds,{padding:[30,30],maxZoom:12}); else map.setView([41.1,-75.3],8); }
+}
+function popupHTML(it){
+  const p=S.pick[it.id];
+  return '<b>'+esc(it.name)+'</b><br><span style="color:#666">'+esc(LEGS[it.leg].label)+(p?' · ♥ '+esc(DAY_LABEL[p.d])+(p.t?' '+fmtTime(p.t):''):'')+'</span>'+
+    '<div class="popbtns">'+(p?'<button data-pop="unpick" data-id="'+it.id+'">Unpick</button>':'<button data-pop="pick" data-id="'+it.id+'">♥ Pick</button>')+
+    '<button data-pop="drawer" data-id="'+it.id+'">Put away</button><a href="'+esc(gmaps(it))+'" target="_blank" rel="noopener" style="font-size:12px;align-self:center">Maps ↗</a></div>';
+}
+
+/* ---------------- saves ---------------- */
+function getSlots(){ let a=[]; try{ a=JSON.parse(lsGet(LS_SLOTS)||"[]"); }catch(e){} if(!Array.isArray(a)) a=[]; for(let i=0;i<5;i++) if(!a[i]) a[i]={name:"Version "+(i+1),code:"",at:""}; return a.slice(0,5); }
+function setSlots(a){ lsSet(LS_SLOTS, JSON.stringify(a)); }
+function isDirty(){ if(activeSlot<0) return S.order.length>0||S.drawer.length>0; const sl=getSlots()[activeSlot]; return !sl||sl.code!==encode(S); }
+function updateDirty(){ const el=document.getElementById("dirtyDot"); if(el) el.style.display=isDirty()?"inline-flex":"none"; }
+function saveSlot(i){
+  const a=getSlots();
+  if(a[i].code&&a[i].code!==encode(S)&&i!==activeSlot&&!confirm('Overwrite "'+a[i].name+'"?')) return false;
+  a[i].code=encode(S); a[i].at=new Date().toLocaleString(); setSlots(a); activeSlot=i; lsSet(LS_ACTIVE,String(i)); updateDirty(); renderSlots(); toast("Saved to "+a[i].name); return true;
+}
+function loadSlot(i){
+  const a=getSlots(); if(!a[i].code) return false;
+  if(isDirty()&&encode(S)!==a[i].code&&!confirm("You have unsaved changes. Load \""+a[i].name+"\" anyway?")) return false;
+  const s=decode(a[i].code); if(!s) return false;
+  importInfo=null; activeSlot=i; lsSet(LS_ACTIVE,String(i)); applyState(s); renderSlots(); toast("Loaded "+a[i].name); return true;
+}
+function renameSlot(i,name){ const a=getSlots(); a[i].name=(name||"").trim()||("Version "+(i+1)); setSlots(a); }
+function renderSlots(){
+  const a=getSlots();
+  document.getElementById("slotList").innerHTML=a.map((s,i)=>{
+    const n=s.code?(decode(s.code)||emptyState()).order.length:0;
+    return '<div class="slot'+(i===activeSlot?' active':'')+'" data-slot="'+i+'"><input value="'+esc(s.name)+'" aria-label="Slot name" data-act="rename">'+
+      '<button class="btn xs primary" data-act="save">Save here</button><button class="btn xs" data-act="load"'+(s.code?'':' disabled')+'>Load</button>'+
+      '<small>'+(s.code?(n+" picks · saved "+esc(s.at)):"empty")+(i===activeSlot?(isDirty()?" · current (unsaved changes)":" · current"):"")+'</small></div>';
+  }).join("");
+}
+
+/* ---------------- ui wiring ---------------- */
+function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("on"); clearTimeout(toast._t); toast._t=setTimeout(()=>t.classList.remove("on"),1800); }
+function showView(v){
+  document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",String(b.dataset.view===v)));
+  document.querySelectorAll("section.view").forEach(s=>s.classList.toggle("active",s.id==="v-"+v));
+  if(v==="map"){ initMap(); if(map) setTimeout(()=>{ map.invalidateSize(); renderMap(true); },60); }
+  try{ window.scrollTo(0,0); }catch(e){}
+}
+function openDlg(id){ const d=document.getElementById(id); if(d.showModal) d.showModal(); else d.setAttribute("open",""); }
+function closeDlg(d){ if(d.close) d.close(); else d.removeAttribute("open"); }
+
+function exportText(){ return document.getElementById("codeOnly").checked?encode(S):summaryText(S); }
+function copyText(txt){
+  if(navigator.clipboard&&navigator.clipboard.writeText) return navigator.clipboard.writeText(txt).then(()=>true,()=>fallbackCopy(txt));
+  return Promise.resolve(fallbackCopy(txt));
+}
+function fallbackCopy(txt){ const ta=document.getElementById("exportText"); ta.value=txt; ta.select(); try{ return document.execCommand("copy"); }catch(e){ return false; } }
+
+function doImport(text){
+  const next=decode(text);
+  if(!next) return {ok:false,msg:"Couldn't find a plan code in that text. It should contain something starting with MLFD1|"};
+  const prev=clone(S);
+  const diff=computeDiff(prev,next);
+  S=normalize(next); persist();
+  importInfo={prev,diff};
+  renderAll();
+  return {ok:true,diff};
+}
+function undoImport(){ if(!importInfo) return; const prev=importInfo.prev; importInfo=null; applyState(prev); toast("Import undone"); }
+
+function loadSuggested(){
+  if(S.order.length&&!confirm("Replace your current picks with the suggested plan? (Your drawer stays.)")) return;
+  const s=emptyState(); SUGGESTED.order.forEach(id=>{ s.order.push(id); s.pick[id]={d:SUGGESTED.days[id],t:""}; });
+  s.drawer=S.drawer.filter(id=>!s.pick[id]); importInfo=null; applyState(s); showView("plan"); toast("Suggested plan loaded — rearrange freely");
+}
+
+document.addEventListener("click",e=>{
+  const tab=e.target.closest(".tab"); if(tab){ showView(tab.dataset.view); return; }
+  const lc=e.target.closest("[data-leg]"); if(lc){ F.leg=lc.dataset.leg; renderFilters(); renderExplore(); return; }
+  const cc=e.target.closest("[data-cat]"); if(cc){ F.cat=cc.dataset.cat; renderFilters(); renderExplore(); return; }
+  const pop=e.target.closest("[data-pop]"); if(pop){ const id=pop.dataset.id; if(map) map.closePopup();
+    if(pop.dataset.pop==="pick") pickItem(id); else if(pop.dataset.pop==="unpick") unpick(id); else toDrawer(id); return; }
+  const act=e.target.closest("[data-act]"); if(act){
+    const a=act.dataset.act;
+    const holder=act.closest("[data-id]"); const id=holder&&holder.dataset.id;
+    if(a==="pick"){ pickItem(id); toast("Added to "+DAY_LABEL[S.pick[id].d]); }
+    else if(a==="unpick") unpick(id);
+    else if(a==="drawer") toDrawer(id);
+    else if(a==="undrawer") fromDrawer(id);
+    else if(a==="day") pickItem(id,act.dataset.d);
+    else if(a==="more"){ const m=document.getElementById("more-"+id); const open=!m.classList.contains("open"); m.classList.toggle("open",open); act.setAttribute("aria-expanded",String(open)); act.textContent=open?"Less":"More"; if(open) loadGallery(BY_ID[id],document.getElementById("gal-"+id)); }
+    else if(a==="save"||a==="load"){ const i=+act.closest("[data-slot]").dataset.slot; if(a==="save") saveSlot(i); else { if(loadSlot(i)) closeDlg(document.getElementById("dSlots")); } }
+    return;
+  }
+  if(e.target.closest("[data-close]")){ closeDlg(e.target.closest("dialog")); return; }
+  if(e.target.id==="bUndo"){ undoImport(); return; }
+  if(e.target.id==="bDismiss"){ importInfo=null; renderPlan(); return; }
+});
+document.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.dataset&&el.dataset.act==="time"){ setTime(el.closest("[data-id]").dataset.id, el.value); }
+  else if(el.dataset&&el.dataset.act==="setday"){ setDay(el.closest("[data-id]").dataset.id, el.value); }
+  else if(el.dataset&&el.dataset.act==="rename"){ renameSlot(+el.closest("[data-slot]").dataset.slot, el.value); }
+  else if(el.id==="codeOnly"){ document.getElementById("exportText").value=exportText(); }
+  else if(el.id==="mShowAll"||el.id==="mShowDrawer"){ renderMapIfReady(); }
+});
+document.getElementById("bExport").onclick=()=>{
+  document.getElementById("exportText").value=exportText();
+  document.getElementById("bShare").style.display=navigator.share?"inline-flex":"none";
+  openDlg("dExport");
+};
+document.getElementById("bCopy").onclick=()=>{ copyText(exportText()).then(ok=>toast(ok?"Copied — paste it into a text":"Select the text and copy it")); };
+document.getElementById("bShare").onclick=()=>{ if(navigator.share) navigator.share({text:exportText()}).catch(()=>{}); };
+document.getElementById("bImport").onclick=()=>{ document.getElementById("importErr").textContent=""; document.getElementById("importText").value=""; openDlg("dImport"); };
+document.getElementById("bApply").onclick=()=>{
+  const r=doImport(document.getElementById("importText").value);
+  if(!r.ok){ document.getElementById("importErr").textContent=r.msg; return; }
+  closeDlg(document.getElementById("dImport")); showView("plan"); toast(r.diff.total?"Plan updated from text":"Same plan — nothing changed");
+};
+document.getElementById("bSlots").onclick=()=>{ renderSlots(); openDlg("dSlots"); };
+document.getElementById("bSuggest").onclick=loadSuggested;
+document.getElementById("mFit").onclick=()=>renderMap(true);
+
+renderHeads(); renderAll(); updateDirty();
+
+/* test hooks */
+window.__trip={ITEMS,BY_ID,encode,decode,summaryText,computeDiff,doImport,undoImport,getState:()=>clone(S),setState:s=>{importInfo=null;applyState(s)},
+  pickItem,unpick,toDrawer,fromDrawer,setTime,setDay,saveSlot,loadSlot,getSlots,isDirty,loadSuggested:()=>{const c=window.confirm;window.confirm=()=>true;loadSuggested();window.confirm=c;},getImport:()=>importInfo};
+})();
+</script>
+</body>
+</html>
